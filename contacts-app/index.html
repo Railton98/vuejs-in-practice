@@ -51,7 +51,7 @@
                 <p class="card-text">{{ contact.email }}, {{ contact.phone }}</p>
 
                 <a href="#" class="btn btn-sm btn-primary">EDITAR</a>
-                <a href="#" class="btn btn-sm btn-danger">DELETAR</a>
+                <a href="#" class="btn btn-sm btn-danger" @click.prevent="removeContact(contact.id)">DELETAR</a>
               </div>
             </div>
           </div>
@@ -70,6 +70,7 @@
           contacts: [],
           name: "Contatos App",
           contact: {
+            id: "",
             name: "",
             email: "",
             phone: ""
@@ -92,6 +93,7 @@
         },
         saveContact (contact) {
           let contacts = localStorage.getItem('contacts')
+          contact.id = new Date().getTime()
 
           if (contacts) {
             contacts = JSON.parse(contacts)
@@ -103,7 +105,21 @@
           this.contacts = contacts
           localStorage.setItem('contacts', JSON.stringify(contacts))
           this.clearForm()
-        }
+        },
+        removeContact(contactId) {
+          let contacts = localStorage.getItem('contacts')
+
+          if (!contacts) return
+
+          contacts = JSON.parse(contacts)
+
+          contacts = contacts.filter((contact) => {
+            return contact.id != contactId
+          })
+
+          this.contacts = contacts
+          localStorage.setItem('contacts', JSON.stringify(contacts))
+        },
       }
     })
   </script>
