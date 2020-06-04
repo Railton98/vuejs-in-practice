@@ -33,9 +33,8 @@
           </div>
 
           <div class="form-group ml-1">
-            <button @click.prevent="saveContact(contact)" class="btn btn-lg btn-rounded btn-success">
-              Criar Contato
-            </button>
+            <button v-if="isEditing" @click.prevent="updateContact(contact)" class="btn btn-lg btn-rounded btn-info">Atualizar Contato</button>
+            <button v-else @click.prevent="saveContact(contact)" class="btn btn-lg btn-rounded btn-success">Criar Contato</button>
           </div>
         </form>
       </div>
@@ -50,8 +49,8 @@
 
                 <p class="card-text">{{ contact.email }}, {{ contact.phone }}</p>
 
-                <a href="#" class="btn btn-sm btn-primary">EDITAR</a>
-                <a href="#" class="btn btn-sm btn-danger" @click.prevent="removeContact(contact.id)">DELETAR</a>
+                <button class="btn btn-sm btn-primary" @click.prevent="editContact(contact)">EDITAR</button>
+                <button class="btn btn-sm btn-danger" @click.prevent="removeContact(contact.id)">DELETAR</button>
               </div>
             </div>
           </div>
@@ -67,21 +66,22 @@
       el: "#app",
       data() {
         return {
-          contacts: [],
           name: "Contatos App",
+          contacts: [],
           contact: {
             id: "",
             name: "",
             email: "",
             phone: ""
           },
+          isEditing: false
         }
       },
       created () {
         this.getSavedContacts()
       },
       methods: {
-        clearForm() {
+        clearForm () {
           this.contact = {
             name: "",
             email: "",
@@ -106,7 +106,7 @@
           localStorage.setItem('contacts', JSON.stringify(contacts))
           this.clearForm()
         },
-        removeContact(contactId) {
+        removeContact (contactId) {
           let contacts = localStorage.getItem('contacts')
 
           if (!contacts) return
@@ -119,6 +119,24 @@
 
           this.contacts = contacts
           localStorage.setItem('contacts', JSON.stringify(contacts))
+        },
+        editContact (contact) {
+          this.contact = contact
+          this.isEditing = true
+        },
+        updateContact (contact) {
+          let contacts = this.contacts.map(cnt => {
+            if (cnt.id == contact.id) {
+              return contact
+            }
+            return cnt
+          })
+
+          this.contacts = contacts
+          this.isEditing = false
+
+          localStorage.setItem('contacts', JSON.stringify(contacts))
+          this.clearForm()
         },
       }
     })
