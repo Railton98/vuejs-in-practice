@@ -11,8 +11,9 @@
 <body>
   <div class="container" id="app">
     <div class="row mt-5">
-      <div class="col-12 border-bottom mb-5">
+      <div class="col-12 border-bottom mb-5 d-flex justify-content-between align-items-center">
         <h2>{{ name }}</h2>
+        <p>{{ contactsCount }}</p>
       </div>
 
       <div class="col-4">
@@ -33,8 +34,10 @@
           </div>
 
           <div class="form-group ml-1">
-            <button v-if="isEditing" @click.prevent="updateContact(contact)" class="btn btn-lg btn-rounded btn-info">Atualizar Contato</button>
-            <button v-else @click.prevent="saveContact(contact)" class="btn btn-lg btn-rounded btn-success">Criar Contato</button>
+            <button v-if="isEditing" @click.prevent="updateContact(contact)"
+              class="btn btn-lg btn-rounded btn-info">Atualizar Contato</button>
+            <button v-else @click.prevent="saveContact(contact)" class="btn btn-lg btn-rounded btn-success">Criar
+              Contato</button>
           </div>
         </form>
       </div>
@@ -77,21 +80,26 @@
           isEditing: false
         }
       },
-      created () {
+      computed: {
+        contactsCount() {
+          return `Total de contatos é: ${this.contacts.length}`
+        },
+      },
+      created() {
         this.getSavedContacts()
       },
       methods: {
-        clearForm () {
+        clearForm() {
           this.contact = {
             name: "",
             email: "",
             phone: ""
           }
         },
-        getSavedContacts () {
+        getSavedContacts() {
           this.contacts = JSON.parse(localStorage.getItem('contacts'))
         },
-        saveContact (contact) {
+        saveContact(contact) {
           let contacts = localStorage.getItem('contacts')
           contact.id = new Date().getTime()
 
@@ -106,7 +114,7 @@
           localStorage.setItem('contacts', JSON.stringify(contacts))
           this.clearForm()
         },
-        removeContact (contactId) {
+        removeContact(contactId) {
           let contacts = localStorage.getItem('contacts')
 
           if (!contacts) return
@@ -120,11 +128,11 @@
           this.contacts = contacts
           localStorage.setItem('contacts', JSON.stringify(contacts))
         },
-        editContact (contact) {
+        editContact(contact) {
           this.contact = contact
           this.isEditing = true
         },
-        updateContact (contact) {
+        updateContact(contact) {
           let contacts = this.contacts.map(cnt => {
             if (cnt.id == contact.id) {
               return contact
